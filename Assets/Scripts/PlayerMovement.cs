@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,25 +8,35 @@ public class PlayerMovement : MonoBehaviour
    private Vector2 moveInput;
    private InputSystem_Actions inputActions;
 
+   private void Awake()
+   {
+      inputActions = new InputSystem_Actions();
+   }
+
+   private void OnEnable()
+   {
+      inputActions.Player.Enable();
+   }
+
+   private void OnDisable()
+   {
+      inputActions.Player.Disable();
+   }
+
    void Start()
    {
-      
-   }
 
-   void OnMove(InputValue value)
-   {  
-      moveInput = value.Get<Vector2>();
-      print(moveInput.ToString());
    }
-
-   
 
    void Update()
    {
-      
-
-      /* float moveValue = movementSpeed * Time.deltaTime;
+      moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+      print("moveInput: " + moveInput);
+      float moveValue = movementSpeed * Time.deltaTime;
       float jumpValue = jumpHight * Time.deltaTime;
+
+      /* 
+      
 
       if (moveVector.x < 0)
       {
