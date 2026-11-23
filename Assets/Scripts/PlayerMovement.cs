@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 
    private Vector2 moveInput;
    private InputSystem_Actions inputActions;
+   private Rigidbody2D myRigidBody2D;
 
    private void Awake()
    {
@@ -25,31 +26,23 @@ public class PlayerMovement : MonoBehaviour
 
    void Start()
    {
-
+      myRigidBody2D = GetComponent<Rigidbody2D>();
    }
 
    void Update()
    {
       moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-      print("moveInput: " + moveInput);
-      float moveValue = movementSpeed * Time.deltaTime;
-      float jumpValue = jumpHight * Time.deltaTime;
+   }
 
-      /* 
-      
+   void FixedUpdate()
+   {
+      PlayerMove();
+   }
 
-      if (moveVector.x < 0)
-      {
-         gameObject.transform.Translate(-moveValue, 0, 0);
-      }
-      else if (moveVector.x > 0)
-      {
-         gameObject.transform.Translate(moveValue, 0, 0);
-      }
-
-      if (jumpAction.IsPressed())
-      {
-         gameObject.transform.Translate(0, jumpValue, 0);
-      } */
+   void PlayerMove()
+   {
+      Vector2 velocity = myRigidBody2D.linearVelocity;
+      velocity.x = moveInput.x * movementSpeed;
+      myRigidBody2D.linearVelocity = velocity;
    }
 }
