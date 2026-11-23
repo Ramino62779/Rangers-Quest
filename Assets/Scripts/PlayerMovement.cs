@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -32,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
    void Update()
    {
       moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+      FlipSprite();
    }
 
    void FixedUpdate()
@@ -44,5 +46,14 @@ public class PlayerMovement : MonoBehaviour
       Vector2 velocity = myRigidBody2D.linearVelocity;
       velocity.x = moveInput.x * movementSpeed;
       myRigidBody2D.linearVelocity = velocity;
+   }
+
+   //Flip scaling horizontally to face walking direction
+   void FlipSprite()
+   {
+      if (Mathf.Abs(moveInput.x) > Mathf.Epsilon)
+      {
+         transform.localScale = new Vector3(Mathf.Sign(moveInput.x), 1f, 1f);
+      }
    }
 }
