@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-   [SerializeField] private float movementSpeed = 10f;
+   [SerializeField] private float walkingSpeed = 3f;
+   [SerializeField] private float runningSpeed = 6f;
    [SerializeField] private float jumpHight = 5f;
 
    private Vector2 moveInput;
    private InputSystem_Actions inputActions;
    private Rigidbody2D myRigidBody2D;
+   private Animator myAnimator;
 
    private void Awake()
    {
@@ -28,23 +30,36 @@ public class PlayerMovement : MonoBehaviour
    void Start()
    {
       myRigidBody2D = GetComponent<Rigidbody2D>();
+      myAnimator = GetComponentInChildren<Animator>();
    }
 
    void Update()
    {
       moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+
       FlipSprite();
+      AnimatePlayer();
    }
 
    void FixedUpdate()
    {
-      PlayerMove();
+      MovePlayer();
    }
 
-   void PlayerMove()
+   void MovePlayer()
    {
       Vector2 velocity = myRigidBody2D.linearVelocity;
-      velocity.x = moveInput.x * movementSpeed;
+      
+
+      if (inputActions.Player.Walk.IsPressed())
+      {
+         velocity.x = moveInput.x * walkingSpeed;
+      }
+      else
+      {
+         velocity.x = moveInput.x * runningSpeed;
+      }
+
       myRigidBody2D.linearVelocity = velocity;
    }
 
@@ -54,6 +69,28 @@ public class PlayerMovement : MonoBehaviour
       if (Mathf.Abs(moveInput.x) > Mathf.Epsilon)
       {
          transform.localScale = new Vector3(Mathf.Sign(moveInput.x), 1f, 1f);
+      }
+   }
+
+   void AnimatePlayer()
+   {
+      if (Mathf.Abs(myRigidBody2D.linearVelocity.x) > Mathf.Epsilon)
+      {
+         if (inputActions.Player.Walk.IsPressed())
+         {
+            myAnimator.SetBool("isWalking", true);
+            myAnimator.SetBool("isRunning", false);
+         }
+         else
+         {
+            myAnimator.SetBool("isRunning", true);
+            myAnimator.SetBool("isWalking", false);
+         }
+      }
+      else
+      {
+         myAnimator.SetBool("isWalking", false);
+         myAnimator.SetBool("isRunning", false);
       }
    }
 }
